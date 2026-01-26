@@ -240,7 +240,7 @@ export default function Lab1() {
                 </form>
                 <h4>Anchor tag</h4>
                 Please <a href="https://www.lipsum.com" id="wd-lipsum">click here</a> to get dummy text<br/>
-                Link to my Github repository: <a href="https://github.com/dsilva-rhianna?tab=repositories" id="wd-github">click to see repository</a><br/>
+                Link to my Github repository: <a href="https://github.com/dsilva-rhianna/kambaz-next-js" id="wd-github">click to see repository</a><br/>
             </div>
         </div>
 );}
