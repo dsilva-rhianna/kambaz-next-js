@@ -1,131 +1,164 @@
 import Link from "next/link";
-import Image from "next/image";
+import { Button, Card, CardBody, CardImg, CardText, CardTitle, Col, Row } from "react-bootstrap";
+
 export default function Dashboard() {
     return (
         <div id="wd-dashboard">
             <h1 id="wd-dashboard-title">Dashboard</h1> <hr />
             <h2 id="wd-dashboard-published">Published Courses (10)</h2> <hr />
             <div id="wd-dashboard-courses">
-                <div className="wd-dashboard-course">
-                    <Link href="/courses/1234" className="wd-dashboard-course-link">
-                        <Image src="/images/reactjs.jpg" width={200} height={150} alt="reactjs" />
-                        <div>
-                            <h5> CS1234 React JS </h5>
-                            <p className="wd-dashboard-course-title">
-                                Full Stack Software Developer
-                            </p>
-                            <button> Go </button>
-                        </div>
-                    </Link>
-                </div>
-                <div className="wd-dashboard-course">
-                    <Link href="/courses/3520" className="wd-dashboard-course-link">
-                        <Image src="/images/cpp.jpg" width={200} height={150} alt="cpp" />
-                        <div>
-                            <h5> CS3520 Programming in C++ </h5>
-                            <p className="wd-dashboard-course-title">
-                                Systems Engineer
-                            </p>
-                            <button> Go </button>
-                        </div>
-                    </Link>
-                </div>
-                <div className="wd-dashboard-course">
-                    <Link href="/courses/1145" className="wd-dashboard-course-link">
-                        <Image src="/images/humanvalues.jpg" width={200} height={150} alt="humanvalues" />
-                        <div>
-                            <h5> PHIL1145 Technology and Human Values </h5>
-                            <p className="wd-dashboard-course-title">
-                                Technology Policy Analyst
-                            </p>
-                            <button> Go </button>
-                        </div>
-                    </Link>
-                </div>
-                <div className="wd-dashboard-course">
-                    <Link href="/courses/3081" className="wd-dashboard-course-link">
-                        <Image src="/images/stats.jpg" width={200} height={150} alt="stats" />
-                        <div>
-                            <h5> MATH3081 Probability and Statistics </h5>
-                            <p className="wd-dashboard-course-title">
-                                Data Analyst
-                            </p>
-                            <button> Go </button>
-                        </div>
-                    </Link>
-                </div>
-                <div className="wd-dashboard-course">
-                    <Link href="/courses/2550" className="wd-dashboard-course-link">
-                        <Image src="/images/cybersecurity.jpg" width={200} height={150} alt="cybersecurity" />
-                        <div>
-                            <h5> CYY2550 Foundations of Cybersecurity </h5>
-                            <p className="wd-dashboard-course-title">
-                                Cybersecurity Analyst
-                            </p>
-                            <button> Go </button>
-                        </div>
-                    </Link>
-                </div>
-                <div className="wd-dashboard-course">
-                    <Link href="/courses/2209" className="wd-dashboard-course-link">
-                        <Image src="/images/finance.jpg" width={200} height={150} alt="finance" />
-                        <div>
-                            <h5> FINA2209 Financial Management </h5>
-                            <p className="wd-dashboard-course-title">
-                                Financial Manager
-                            </p>
-                            <button> Go </button>
-                        </div>
-                    </Link>
-                </div>
-                <div className="wd-dashboard-course">
-                    <Link href="/courses/3800" className="wd-dashboard-course-link">
-                        <Image src="/images/theory.jpg" width={200} height={150} alt="theory" />
-                        <div>
-                            <h5> CS3800 Theory of Computation </h5>
-                            <p className="wd-dashboard-course-title">
-                                Theoretical Computer Scientist
-                            </p>
-                            <button> Go </button>
-                        </div>
-                    </Link>
-                </div>
-                <div className="wd-dashboard-course">
-                    <Link href="/courses/1800" className="wd-dashboard-course-link">
-                        <Image src="/images/discrete.jpg" width={200} height={150} alt="discrete" />
-                        <div>
-                            <h5> CS1800 Discrete Structures </h5>
-                            <p className="wd-dashboard-course-title">
-                                Computational Mathematician
-                            </p>
-                            <button> Go </button>
-                        </div>
-                    </Link>
-                </div>
-                <div className="wd-dashboard-course">
-                    <Link href="/courses/3500" className="wd-dashboard-course-link">
-                        <Image src="/images/ood.jpg" width={200} height={150} alt="ood" />
-                        <div>
-                            <h5> CS3500 Object Oriented Design </h5>
-                            <p className="wd-dashboard-course-title">
-                                Software Architect
-                            </p>
-                            <button> Go </button>
-                        </div>
-                    </Link>
-                </div>
-                <div className="wd-dashboard-course">
-                    <Link href="/courses/3000" className="wd-dashboard-course-link">
-                        <Image src="/images/algorithms.jpg" width={200} height={150} alt="algorithms" />
-                        <div>
-                            <h5> CS3000 Algorithms and Data </h5>
-                            <p className="wd-dashboard-course-title">
-                                Algorithm Engineer
-                            </p>
-                            <button> Go </button>
-                        </div>
-                    </Link>
-                </div>
+                <Row xs={1} md={5} className="g-4">
+                    <Col className="wd-dashboard-course" style={{ width: "300px" }}>
+                        <Card>
+                            <Link href="/courses/1234/home" className="wd-dashboard-course-link text-decoration-none text-dark">
+                                <CardImg variant="top" src="/images/reactjs.jpg" width="100%" height={160}/>
+                                <CardBody>
+                                    <CardTitle className="wd-dashboard-course-title text-nowrap overflow-hidden">CS1234 React JS</CardTitle>
+                                    <CardText className="wd-dashboard-course-description overflow-hidden" style={{ height: "100px" }}>
+                                        Full Stack software developer
+                                    </CardText>
+                                    <Button variant="primary">Go</Button>
+                                </CardBody>
+                            </Link>
+                        </Card>
+                    </Col>
+
+                    <Col className="wd-dashboard-course" style={{ width: "300px" }}>
+                        <Card>
+                            <Link href="/courses/3520" className="wd-dashboard-course-link text-decoration-none text-dark">
+                                <CardImg variant="top" src="/images/cpp.jpg" width="100%" height={160}/>
+                                <CardBody>
+                                    <CardTitle className="wd-dashboard-course-title text-nowrap overflow-hidden">CS3520 Programming in C++</CardTitle>
+                                    <CardText className="wd-dashboard-course-description overflow-hidden" style={{ height: "100px" }}>
+                                        Systems Engineer
+                                    </CardText>
+                                    <Button variant="primary">Go</Button>
+                                </CardBody>
+                            </Link>
+                        </Card>
+                    </Col>
+
+                    <Col className="wd-dashboard-course" style={{ width: "300px" }}>
+                        <Card>
+                            <Link href="/courses/1145" className="wd-dashboard-course-link text-decoration-none text-dark">
+                                <CardImg variant="top" src="/images/humanvalues.jpg" width="100%" height={160}/>
+                                <CardBody>
+                                    <CardTitle className="wd-dashboard-course-title text-nowrap overflow-hidden">PHIL1145 Technology and Human Values</CardTitle>
+                                    <CardText className="wd-dashboard-course-description overflow-hidden" style={{ height: "100px" }}>
+                                        Technology Policy Analyst
+                                    </CardText>
+                                    <Button variant="primary">Go</Button>
+                                </CardBody>
+                            </Link>
+                        </Card>
+                    </Col>
+
+                    <Col className="wd-dashboard-course" style={{ width: "300px" }}>
+                        <Card>
+                            <Link href="/courses/3081" className="wd-dashboard-course-link text-decoration-none text-dark">
+                                <CardImg variant="top" src="/images/stats.jpg" width="100%" height={160}/>
+                                <CardBody>
+                                    <CardTitle className="wd-dashboard-course-title text-nowrap overflow-hidden">MATH3081 Probability and Statistics</CardTitle>
+                                    <CardText className="wd-dashboard-course-description overflow-hidden" style={{ height: "100px" }}>
+                                        Data Analyst
+                                    </CardText>
+                                    <Button variant="primary">Go</Button>
+                                </CardBody>
+                            </Link>
+                        </Card>
+                    </Col>
+
+                    <Col className="wd-dashboard-course" style={{ width: "300px" }}>
+                        <Card>
+                            <Link href="/courses/2550" className="wd-dashboard-course-link text-decoration-none text-dark">
+                                <CardImg variant="top" src="/images/cybersecurity.jpg" width="100%" height={160}/>
+                                <CardBody>
+                                    <CardTitle className="wd-dashboard-course-title text-nowrap overflow-hidden">CYY2550 Foundations of Cybersecurity</CardTitle>
+                                    <CardText className="wd-dashboard-course-description overflow-hidden" style={{ height: "100px" }}>
+                                        Cybersecurity Analyst
+                                    </CardText>
+                                    <Button variant="primary">Go</Button>
+                                </CardBody>
+                            </Link>
+                        </Card>
+                    </Col>
+
+                    <Col className="wd-dashboard-course" style={{ width: "300px" }}>
+                        <Card>
+                            <Link href="/courses/2209" className="wd-dashboard-course-link text-decoration-none text-dark">
+                                <CardImg variant="top" src="/images/finance.jpg" width="100%" height={160}/>
+                                <CardBody>
+                                    <CardTitle className="wd-dashboard-course-title text-nowrap overflow-hidden">FINA2209 Financial Management</CardTitle>
+                                    <CardText className="wd-dashboard-course-description overflow-hidden" style={{ height: "100px" }}>
+                                        Financial Manager
+                                    </CardText>
+                                    <Button variant="primary">Go</Button>
+                                </CardBody>
+                            </Link>
+                        </Card>
+                    </Col>
+
+                    <Col className="wd-dashboard-course" style={{ width: "300px" }}>
+                        <Card>
+                            <Link href="/courses/3800" className="wd-dashboard-course-link text-decoration-none text-dark">
+                                <CardImg variant="top" src="/images/theory.jpg" width="100%" height={160}/>
+                                <CardBody>
+                                    <CardTitle className="wd-dashboard-course-title text-nowrap overflow-hidden">CS3800 Theory of Computation</CardTitle>
+                                    <CardText className="wd-dashboard-course-description overflow-hidden" style={{ height: "100px" }}>
+                                        Theoretical Computer Scientist
+                                    </CardText>
+                                    <Button variant="primary">Go</Button>
+                                </CardBody>
+                            </Link>
+                        </Card>
+                    </Col>
+
+                    <Col className="wd-dashboard-course" style={{ width: "300px" }}>
+                        <Card>
+                            <Link href="/courses/1800" className="wd-dashboard-course-link text-decoration-none text-dark">
+                                <CardImg variant="top" src="/images/discrete.jpg" width="100%" height={160}/>
+                                <CardBody>
+                                    <CardTitle className="wd-dashboard-course-title text-nowrap overflow-hidden">CS1800 Discrete Structures</CardTitle>
+                                    <CardText className="wd-dashboard-course-description overflow-hidden" style={{ height: "100px" }}>
+                                        Computational Mathematician
+                                    </CardText>
+                                    <Button variant="primary">Go</Button>
+                                </CardBody>
+                            </Link>
+                        </Card>
+                    </Col>
+
+                    <Col className="wd-dashboard-course" style={{ width: "300px" }}>
+                        <Card>
+                            <Link href="/courses/3500" className="wd-dashboard-course-link text-decoration-none text-dark">
+                                <CardImg variant="top" src="/images/ood.jpg" width="100%" height={160}/>
+                                <CardBody>
+                                    <CardTitle className="wd-dashboard-course-title text-nowrap overflow-hidden">CS3500 Object Oriented Design</CardTitle>
+                                    <CardText className="wd-dashboard-course-description overflow-hidden" style={{ height: "100px" }}>
+                                        Software Architect
+                                    </CardText>
+                                    <Button variant="primary">Go</Button>
+                                </CardBody>
+                            </Link>
+                        </Card>
+                    </Col>
+
+                    <Col className="wd-dashboard-course" style={{ width: "300px" }}>
+                        <Card>
+                            <Link href="/courses/3000" className="wd-dashboard-course-link text-decoration-none text-dark">
+                                <CardImg variant="top" src="/images/algorithms.jpg" width="100%" height={160}/>
+                                <CardBody>
+                                    <CardTitle className="wd-dashboard-course-title text-nowrap overflow-hidden">CS3000 Algorithms and Data</CardTitle>
+                                    <CardText className="wd-dashboard-course-description overflow-hidden" style={{ height: "100px" }}>
+                                        Algorithm Engineer
+                                    </CardText>
+                                    <Button variant="primary">Go</Button>
+                                </CardBody>
+                            </Link>
+                        </Card>
+                    </Col>
+                </Row>
             </div>
         </div>
-);}
+    );
+}
