@@ -10,12 +10,7 @@ export default function Profile() {
             <FormControl id="wd-last-name" defaultValue="Wonderland" className="mb-2" />
             <FormControl id="wd-dob" type="date" placeholder="mm/dd/yyyy" className="mb-2" />
             <FormControl id="wd-email" type="email" defaultValue="alice@wonderland.com" className="mb-2" />
-            <FormSelect id="wd-role" className="mb-3" defaultValue="User">
-                <option value="User">User</option>
-                <option value="Admin">Admin</option>
-                <option value="Faculty">Faculty</option>
-                <option value="Student">Student</option>
-            </FormSelect>
+            <FormControl id="wd-role" defaultValue="User" className="mb-2" />
             <Button variant="danger" className="w-100">
                 Signout
             </Button>

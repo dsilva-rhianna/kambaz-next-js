@@ -3,7 +3,7 @@ import { FormControl } from "react-bootstrap";
 export default function Signin() {
     return (
         <div id="wd-signin-screen">
-            <h1>Sign in</h1>
+            <h1>Signin</h1>
             <FormControl id="wd-username"
                 placeholder="username"
                 className="mb-2"/>
@@ -13,8 +13,8 @@ export default function Signin() {
             <Link id="wd-signin-btn"
                 href="/account/profile"
                 className="btn btn-primary w-100 mb-2">
-                Sign in </Link>
-            <Link id="wd-signup-link" href="/account/signup">Sign up</Link>
+                Signin </Link>
+            <Link id="wd-signup-link" href="/account/signup">Signup</Link>
         </div> 
     );
 }

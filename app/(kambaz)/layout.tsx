@@ -13,4 +13,5 @@ export default function KambazLayout({ children }: Readonly<{ children: ReactNod
                 </div>
             </div>
         </div>
-);}
+    );
+}
