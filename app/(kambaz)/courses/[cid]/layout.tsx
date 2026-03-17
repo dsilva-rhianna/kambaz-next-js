@@ -12,20 +12,24 @@ export default function CoursesLayout({ children }: { children: ReactNode }) {
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
   const { enrollments } = useSelector((state: RootState) => state.enrollmentsReducer);
   const { courses } = useSelector((state: RootState) => state.coursesReducer);
-  const course = courses.find((c: any) => c._id === cid);
-
+  
   const [showSidebar, setShowSidebar] = useState(true);
   const toggleSidebar = () => setShowSidebar(!showSidebar);
 
   if (!currentUser) {
     redirect("/account/signin");
+    return null;
   }
 
+  const course = courses.find((c: any) => c._id === cid);
+  
   const isEnrolled = enrollments.some(
     (e: any) => e.user === currentUser._id && e.course === cid
   );
+  
   if (!isEnrolled) {
-    redirect("/dashboard");
+    redirect("/kambaz/dashboard");
+    return null;
   }
 
   return (
@@ -39,6 +43,7 @@ export default function CoursesLayout({ children }: { children: ReactNode }) {
             <FaAlignJustify
               className="me-4 fs-4 mb-1"
               onClick={toggleSidebar}
+              style={{ cursor: "pointer" }}
             />
             {course?.name}
           </h2>
