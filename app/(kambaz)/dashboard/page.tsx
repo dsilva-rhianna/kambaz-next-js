@@ -48,17 +48,17 @@ export default function Dashboard() {
     : courses.filter((course: any) =>
         enrollments.some(
           (enrollment: any) =>
-            enrollment.user === currentUser._id && enrollment.course === course._id
+            enrollment.user === (currentUser as any)._id && enrollment.course === course._id
         )
       );
 
   const isEnrolled = (courseId: string) =>
     enrollments.some(
       (enrollment: any) =>
-        enrollment.user === currentUser._id && enrollment.course === courseId
+        enrollment.user === (currentUser as any)._id && enrollment.course === courseId
     );
 
-  const isFaculty = currentUser.role === "FACULTY" || currentUser.role === "ADMIN";
+  const isFaculty = (currentUser as any).role === "FACULTY" || (currentUser as any).role === "ADMIN";
 
   return (
     <div id="wd-dashboard">
@@ -146,7 +146,7 @@ export default function Dashboard() {
                         className="float-end ms-2"
                         onClick={(e) => {
                           e.preventDefault();
-                          dispatch(unenrollCourse({ user: currentUser._id, course: course._id }));
+                          dispatch(unenrollCourse({ user: (currentUser as any)._id, course: course._id }));
                         }}
                       >
                         Unenroll
@@ -158,7 +158,7 @@ export default function Dashboard() {
                         className="float-end ms-2"
                         onClick={(e) => {
                           e.preventDefault();
-                          dispatch(enrollCourse({ user: currentUser._id, course: course._id }));
+                          dispatch(enrollCourse({ user: (currentUser as any)._id, course: course._id }));
                         }}
                       >
                         Enroll
