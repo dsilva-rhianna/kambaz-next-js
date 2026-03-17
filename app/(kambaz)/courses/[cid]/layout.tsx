@@ -1,26 +1,51 @@
-import { ReactNode } from "react";
-import CourseNavigation from "./Navigation";
-import { FaAlignJustify } from "react-icons/fa";
-import { courses } from "../../database";
-import Breadcrumb from "./Breadcrumb";
+"use client";
 
-export default async function CoursesLayout(
-    { children, params }: Readonly<{ children: ReactNode; params: Promise<{ cid: string }> }>) {
-    const { cid } = await params;
-    const course = courses.find((course) => course._id === cid);
-    return (
-        <div id="wd-courses">
-            <h2 className="text-danger">
-                <FaAlignJustify className="me-4 fs-4 mb-1" />
-                <Breadcrumb course={course} />
-            </h2> <hr />
-            <div className="d-flex">
-                <div className="d-none d-md-block">
-                    <CourseNavigation />
-                </div>
-                <div className="flex-fill">
-                    {children}
-                </div>
-            </div>
+import { ReactNode, useState } from "react";
+import { useParams, redirect } from "next/navigation";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
+import { FaAlignJustify } from "react-icons/fa";
+import CourseNavigation from "./Navigation";
+
+export default function CoursesLayout({ children }: { children: ReactNode }) {
+  const { cid } = useParams();
+  const { currentUser } = useSelector((state: RootState) => state.accountReducer);
+  const { enrollments } = useSelector((state: RootState) => state.enrollmentsReducer);
+  const { courses } = useSelector((state: RootState) => state.coursesReducer);
+  const course = courses.find((c: any) => c._id === cid);
+
+  const [showSidebar, setShowSidebar] = useState(true);
+  const toggleSidebar = () => setShowSidebar(!showSidebar);
+
+  if (!currentUser) {
+    redirect("/account/signin");
+  }
+
+  const isEnrolled = enrollments.some(
+    (e: any) => e.user === currentUser._id && e.course === cid
+  );
+  if (!isEnrolled) {
+    redirect("/dashboard");
+  }
+
+  return (
+    <div id="wd-courses">
+      <div className="d-flex">
+        <div className={`${showSidebar ? "d-block" : "d-none"} wd-course-navigation`}>
+          <CourseNavigation />
         </div>
-);}
+        <div className="flex-fill">
+          <h2 className="text-danger">
+            <FaAlignJustify
+              className="me-4 fs-4 mb-1"
+              onClick={toggleSidebar}
+            />
+            {course?.name}
+          </h2>
+          <hr />
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}

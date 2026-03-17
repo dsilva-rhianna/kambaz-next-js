@@ -1,36 +1,55 @@
-"use client"
+"use client";
+
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Button, Form, ListGroup, ListGroupItem } from "react-bootstrap";
 import { BsGripVertical, BsSearch, BsCaretDownFill } from "react-icons/bs";
-import { FaPlus } from "react-icons/fa6";
+import { FaPlus, FaTrash } from "react-icons/fa6";
 import { IoEllipsisVertical } from "react-icons/io5";
 import { FaRegEdit } from "react-icons/fa";
 import { BsCheckCircleFill } from "react-icons/bs";
-import * as db from "../../../database";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../../store";
+import { deleteAssignment } from "../assignments/reducer";
 
 export default function Assignments() {
   const { cid } = useParams();
-  const assignments = db.assignments;
-  const courseAssignments = assignments.filter((assignment: any) => assignment.course === cid);
+  const router = useRouter();
+  const dispatch = useDispatch();
+
+  const { assignments } = useSelector((state: RootState) => state.assignmentsReducer);
+  const courseAssignments = assignments.filter(
+    (assignment: any) => assignment.course === cid
+  );
+
+  const handleDelete = (assignmentId: string) => {
+    const confirm = window.confirm("Are you sure you want to remove this assignment?");
+    if (confirm) {
+      dispatch(deleteAssignment(assignmentId));
+    }
+  };
 
   return (
     <div id="wd-assignments">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div className="position-relative" style={{ width: "320px" }}>
-            <BsSearch className="position-absolute top-50 start-0 translate-middle-y ms-3" />
-            <Form.Control
-              placeholder="Search for Assignment"
-              className="ps-5"
-              style={{ height: "40px" }}
-            />
+          <BsSearch className="position-absolute top-50 start-0 translate-middle-y ms-3" />
+          <Form.Control
+            placeholder="Search for Assignment"
+            className="ps-5"
+            style={{ height: "40px" }}
+          />
         </div>
         <div className="d-flex align-items-center">
           <Button variant="secondary" className="me-2 text-nowrap">
             <FaPlus className="me-2" />
             Group
           </Button>
-          <Button variant="danger" className="me-2 text-nowrap">
+          <Button
+            variant="danger"
+            className="me-2 text-nowrap"
+            onClick={() => router.push(`/courses/${cid}/assignments/new`)}
+          >
             <FaPlus className="me-2" />
             Assignment
           </Button>
@@ -54,10 +73,18 @@ export default function Assignments() {
               <ListGroupItem key={assignment._id} className="wd-lesson p-3 ps-1">
                 <BsGripVertical className="me-2 fs-3" />
                 <FaRegEdit className="me-3 text-success" />
-                <Link href={`/courses/${cid}/assignments/${assignment._id}`} className="fw-bold fs-5 text-decoration-none text-dark">
+                <Link
+                  href={`/courses/${cid}/assignments/${assignment._id}`}
+                  className="fw-bold fs-5 text-decoration-none text-dark"
+                >
                   {assignment.title}
                 </Link>
                 <span className="float-end">
+                  <FaTrash
+                    className="text-danger me-3 fs-5"
+                    onClick={() => handleDelete(assignment._id)}
+                    style={{ cursor: "pointer" }}
+                  />
                   <BsCheckCircleFill className="text-success me-3 fs-5" />
                   <IoEllipsisVertical className="fs-4" />
                 </span>
