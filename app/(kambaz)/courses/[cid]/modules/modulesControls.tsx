@@ -6,14 +6,16 @@ import ModuleEditor from "./ModuleEditor";
 import { useState } from "react";
 
 export default function ModulesControls(
-  { moduleName, setModuleName, addModule }:
-  { moduleName: string; setModuleName: (title: string) => void; addModule: () => void; }) {
+  { moduleName, setModuleName, addModule, isFaculty }:
+  { moduleName: string; setModuleName: (title: string) => void; addModule: () => void; isFaculty: boolean; }) {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
     return (
         <div id="wd-modules-controls" className="text-nowrap">
+          {isFaculty && (
+            <>
             <Button variant="danger" size="lg" className="me-1 float-end" id="wd-add-module-btn" onClick={handleShow} >
             <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
             Module
@@ -48,5 +50,7 @@ export default function ModulesControls(
             </Button>
             <ModuleEditor show={show} handleClose={handleClose} dialogTitle="Add Module"
             moduleName={moduleName} setModuleName={setModuleName} addModule={addModule} />
+            </>
+          )}
         </div>
 );}

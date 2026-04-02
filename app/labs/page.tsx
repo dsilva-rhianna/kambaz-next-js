@@ -22,12 +22,24 @@ export default function labs() {
                     Lab 4: State Maintenance </Link>
                 </li>
                 <li>
+                    <Link href="/labs/Lab5" id="wd-lab5-link">
+                    Lab 5: HTTP Servers </Link>
+                </li>
+                <li>
                     <Link href="/" id="wd-kambaz-link">
                     Kambaz </Link>
                 </li>
                 <li>
-                    <Link href="https://github.com/dsilva-rhianna/kambaz-next-js" id="wd-github">
-                    Github Repository </Link>
+                    <Link href="https://github.com/dsilva-rhianna/kambaz-next-js" id="wd-github-reach">
+                    React GitHub </Link>
+                </li>
+                <li>
+                    <Link href="https://github.com/dsilva-rhianna/kambaz-node-server-app" id="wd-github-node">
+                    Node GitHub </Link>
+                </li>
+                <li>
+                    <Link href="https://kambaz-node-server-app.onrender.com" id="wd-render">
+                    Render Link </Link>
                 </li>
             </ul>
         </div>

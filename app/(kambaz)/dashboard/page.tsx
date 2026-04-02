@@ -1,9 +1,9 @@
 "use client";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import * as db from "../database";
-import { v4 as uuidv4 } from "uuid";
+import * as client from "../courses/client";
+import * as enrollmentsClient from "../enrollments/client";
+import { setEnrollments, enrollCourse, unenrollCourse } from "../enrollments/reducer";
 import {
   Button,
   Card,
@@ -16,8 +16,7 @@ import {
   Row,
 } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { addNewCourse, deleteCourse, updateCourse } from "../courses/reducer";
-import { enrollCourse, unenrollCourse } from "../enrollments/reducer";
+import { setCourses } from "../courses/reducer";
 import { RootState } from "../store";
 import { redirect } from "next/navigation";
 
@@ -26,7 +25,6 @@ export default function Dashboard() {
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
   const { enrollments } = useSelector((state: RootState) => state.enrollmentsReducer);
   const dispatch = useDispatch();
-
   const [course, setCourse] = useState<any>({
     _id: "0",
     name: "New Course",
@@ -36,34 +34,74 @@ export default function Dashboard() {
     image: "/images/reactjs.jpg",
     description: "New Description",
   });
-
+  const [allCourses, setAllCourses] = useState<any[]>([]);
   const [showAllCourses, setShowAllCourses] = useState(false);
-
   if (!currentUser) {
     redirect("/account/signin");
   }
-
-  const displayedCourses = showAllCourses
-    ? courses
-    : courses.filter((course: any) =>
-        enrollments.some(
-          (enrollment: any) =>
-            enrollment.user === (currentUser as any)._id && enrollment.course === course._id
-        )
-      );
-
-  const isEnrolled = (courseId: string) =>
-    enrollments.some(
-      (enrollment: any) =>
-        enrollment.user === (currentUser as any)._id && enrollment.course === courseId
-    );
-
   const isFaculty = (currentUser as any).role === "FACULTY" || (currentUser as any).role === "ADMIN";
+  const isEnrolled = (courseId: string) =>
+    enrollments.some((e: any) => e.user === (currentUser as any)._id && e.course === courseId);
+  const fetchAllCourses = async () => {
+    try {
+      const courses = await client.fetchAllCourses();
+      setAllCourses(courses);
+    } catch (error) {
+      console.error("Failed to fetch all courses", error);
+    }
+  };
+  const fetchEnrollments = async () => {
+    try {
+      const data = await enrollmentsClient.findEnrollmentsForUser();
+      dispatch(setEnrollments(data));
+    } catch (error) {
+      console.error("Failed to fetch enrollments", error);
+    }
+  };
+  useEffect(() => {
+    if (currentUser) {
+      fetchAllCourses();
+      fetchEnrollments();
+    }
+  }, [currentUser]);
+
+  const displayedCourses = showAllCourses ? allCourses : allCourses.filter((course) => isEnrolled(course._id));
+  const onAddNewCourse = async () => {
+    const newCourse = await client.createCourse(course);
+    setAllCourses([...allCourses, newCourse]);
+    dispatch(setCourses([...courses, newCourse]));
+  };
+  const onDeleteCourse = async (courseId: string) => {
+    await client.deleteCourse(courseId);
+    setAllCourses(allCourses.filter((c) => c._id !== courseId));
+    dispatch(setCourses(courses.filter((c) => c._id !== courseId)));
+  };
+  const onUpdateCourse = async () => {
+    await client.updateCourse(course);
+    const updatedAll = allCourses.map((c) => (c._id === course._id ? course : c));
+    setAllCourses(updatedAll);
+    dispatch(setCourses(courses.map((c) => (c._id === course._id ? course : c))));
+  };
+  const handleEnroll = async (courseId: string) => {
+    try {
+      await enrollmentsClient.enrollInCourse(courseId);
+      dispatch(enrollCourse({ user: (currentUser as any)._id, course: courseId }));
+    } catch (error) {
+      console.error("Failed to enroll", error);
+    }
+  };
+  const handleUnenroll = async (courseId: string) => {
+    try {
+      await enrollmentsClient.unenrollFromCourse(courseId);
+      dispatch(unenrollCourse({ user: (currentUser as any)._id, course: courseId }));
+    } catch (error) {
+      console.error("Failed to unenroll", error);
+    }
+  };
 
   return (
     <div id="wd-dashboard">
       <h1 id="wd-dashboard-title">Dashboard</h1> <hr />
-
       {isFaculty && (
         <>
           <h5>
@@ -71,13 +109,13 @@ export default function Dashboard() {
             <button
               className="btn btn-primary float-end"
               id="wd-add-new-course-click"
-              onClick={() => dispatch(addNewCourse({ ...course, _id: uuidv4() }))}
+              onClick={onAddNewCourse}
             >
               Add
             </button>
             <button
               className="btn btn-warning float-end me-2"
-              onClick={() => dispatch(updateCourse(course))}
+              onClick={onUpdateCourse}
               id="wd-update-course-click"
             >
               Update
@@ -101,17 +139,13 @@ export default function Dashboard() {
 
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h2 id="wd-dashboard-published">
-          Published Courses ({displayedCourses.length})
+          {showAllCourses ? "All Courses" : "Enrolled Courses"} ({displayedCourses.length})
         </h2>
-        <Button
-          variant="primary"
-          onClick={() => setShowAllCourses(!showAllCourses)}
-        >
-          {showAllCourses ? "Enrollments" : "All Courses"}
+        <Button variant="primary" onClick={() => setShowAllCourses(!showAllCourses)}>
+          {showAllCourses ? "Show Enrolled" : "Show All Courses"}
         </Button>
       </div>
       <hr />
-
       <div id="wd-dashboard-courses">
         <Row xs={1} md={5} className="g-4">
           {displayedCourses.map((course: any) => (
@@ -140,37 +174,28 @@ export default function Dashboard() {
                     <Button variant="primary">Go</Button>
 
                     {isEnrolled(course._id) ? (
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        className="float-end ms-2"
+                      <Button variant="danger" size="sm" className="float-end ms-2"
                         onClick={(e) => {
                           e.preventDefault();
-                          dispatch(unenrollCourse({ user: (currentUser as any)._id, course: course._id }));
-                        }}
-                      >
+                          handleUnenroll(course._id);
+                        }}>
                         Unenroll
                       </Button>
                     ) : (
-                      <Button
-                        variant="success"
-                        size="sm"
-                        className="float-end ms-2"
+                      <Button variant="success" size="sm" className="float-end ms-2"
                         onClick={(e) => {
                           e.preventDefault();
-                          dispatch(enrollCourse({ user: (currentUser as any)._id, course: course._id }));
-                        }}
-                      >
+                          handleEnroll(course._id);
+                        }}>
                         Enroll
                       </Button>
                     )}
-
                     {isFaculty && (
                       <>
                         <button
                           onClick={(e) => {
                             e.preventDefault();
-                            dispatch(deleteCourse(course._id));
+                            onDeleteCourse(course._id);
                           }}
                           className="btn btn-danger float-end"
                           id="wd-delete-course-click"

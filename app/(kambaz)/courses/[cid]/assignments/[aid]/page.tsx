@@ -4,18 +4,14 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Button, Col, Form, FormCheck, FormControl, FormLabel, FormSelect, Row } from "react-bootstrap";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../../../../store";
-import { addAssignment, updateAssignment } from "../../assignments/reducer";
-import { v4 as uuidv4 } from "uuid";
+import * as client from "../../assignments/client";
 
 export default function AssignmentEditor() {
   const { cid, aid } = useParams();
   const router = useRouter();
-  const dispatch = useDispatch();
-  const { assignments } = useSelector((state: RootState) => state.assignmentsReducer);
-
-  const existingAssignment = assignments.find((a: any) => a._id === aid);
+  const { currentUser } = useSelector((state: RootState) => state.accountReducer);
   const [assignment, setAssignment] = useState({
     title: "",
     description: "",
@@ -25,38 +21,54 @@ export default function AssignmentEditor() {
     until: "",
     course: cid,
   });
-
+  const isFaculty = (currentUser as any)?.role === "FACULTY" || (currentUser as any)?.role === "ADMIN";
   useEffect(() => {
-    if (existingAssignment) {
-      setAssignment({
-        title: existingAssignment.title || "",
-        description: existingAssignment.description || "",
-        points: existingAssignment.points || 100,
-        due: existingAssignment.due || "",
-        available: existingAssignment.available || "",
-        until: existingAssignment.until || existingAssignment.due || "",
-        course: cid,
-      });
+    if (!isFaculty) {
+      router.push(`/courses/${cid}/assignments`);
+      return;
     }
-  }, [existingAssignment, cid]);
+    const fetchAssignment = async () => {
+      if (aid === "new") {
+        return;
+      }
+      try {
+        const data = await client.findAssignmentById(aid as string);
+        setAssignment({
+          title: data.title || "",
+          description: data.description || "",
+          points: data.points || 100,
+          due: data.due || "",
+          available: data.available || "",
+          until: data.until || data.due || "",
+          course: cid,
+        });
+      } catch (error) {
+        console.error("Failed to fetch assignment", error);
+        router.push(`/courses/${cid}/assignments`);
+      }
+    };
+    fetchAssignment();
+  }, [aid, cid, isFaculty, router]);
 
-  const handleSave = () => {
-    if (aid === "new") {
-      const newAssignment = {
-        _id: uuidv4(),
-        ...assignment,
-        until: assignment.until || assignment.due,
-      };
-      dispatch(addAssignment(newAssignment));
-    } else {
-      const updatedAssignment = {
-        ...existingAssignment,
-        ...assignment,
-        until: assignment.until || assignment.due,
-      };
-      dispatch(updateAssignment(updatedAssignment));
+  const handleSave = async () => {
+    try {
+      if (aid === "new") {
+        const newAssignment = {
+          ...assignment,
+          course: cid,
+          until: assignment.until || assignment.due,
+        };
+        await client.createAssignment(newAssignment);
+      } else {
+        await client.updateAssignment(aid as string, {
+          ...assignment,
+          until: assignment.until || assignment.due,
+        });
+      }
+      router.push(`/courses/${cid}/assignments`);
+    } catch (error) {
+      console.error("Failed to save assignment", error);
     }
-    router.push(`/courses/${cid}/assignments`);
   };
 
   return (

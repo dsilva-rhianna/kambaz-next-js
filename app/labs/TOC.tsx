@@ -22,10 +22,19 @@ export default function TOC() {
                 <NavLink href="/labs/lab4" as={Link} className={`nav-link ${pathname.endsWith("lab4") ? "active" : ""}`}>Lab 4</NavLink>
             </NavItem>
             <NavItem>
+                <NavLink href="/labs/Lab5" as={Link} className={`nav-link ${pathname.endsWith("Lab5") ? "active" : ""}`}>Lab 5</NavLink>
+            </NavItem>
+            <NavItem>
                 <NavLink href="/" as={Link}>Kambaz</NavLink>
             </NavItem>
             <NavItem>
-                <NavLink href="https://github.com/dsilva-rhianna/kambaz-next-js">GitHub</NavLink>
+                <NavLink href="https://github.com/dsilva-rhianna/kambaz-next-js">React GitHub</NavLink>
+            </NavItem>
+            <NavItem>
+                <NavLink href="https://github.com/dsilva-rhianna/kambaz-node-server-app">Node GitHub</NavLink>
+            </NavItem>
+            <NavItem>
+                <NavLink href="https://kambaz-node-server-app.onrender.com">Render Link</NavLink>
             </NavItem>
         </Nav>
     );

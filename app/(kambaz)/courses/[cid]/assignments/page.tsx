@@ -10,25 +10,40 @@ import { FaRegEdit } from "react-icons/fa";
 import { BsCheckCircleFill } from "react-icons/bs";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../store";
-import { deleteAssignment } from "../assignments/reducer";
+import { useState, useEffect } from "react";
+import * as client from "../assignments/client";
 
 export default function Assignments() {
   const { cid } = useParams();
   const router = useRouter();
-  const dispatch = useDispatch();
+  const [assignments, setAssignments] = useState<any[]>([]);
+  const { currentUser } = useSelector((state: RootState) => state.accountReducer);
+  const isFaculty = (currentUser as any)?.role === "FACULTY" || (currentUser as any)?.role === "ADMIN";
 
-  const { assignments } = useSelector((state: RootState) => state.assignmentsReducer);
-  const courseAssignments = assignments.filter(
-    (assignment: any) => assignment.course === cid
-  );
-
-  const handleDelete = (assignmentId: string) => {
-    const confirm = window.confirm("Are you sure you want to remove this assignment?");
-    if (confirm) {
-      dispatch(deleteAssignment(assignmentId));
+  const fetchAssignments = async () => {
+    try {
+      const data = await client.findAssignmentsForCourse(cid as string);
+      setAssignments(data);
+    } catch (error) {
+      console.error("Failed to fetch assignments", error);
     }
   };
+  useEffect(() => {
+    fetchAssignments();
+  }, [cid]);
 
+  const handleDelete = async (assignmentId: string) => {
+    const confirm = window.confirm("Are you sure you want to remove this assignment?");
+    if (confirm) {
+      try {
+        await client.deleteAssignment(assignmentId);
+        setAssignments(assignments.filter((a) => a._id !== assignmentId));
+      } catch (error) {
+        console.error("Failed to delete assignment", error);
+      }
+    }
+  };
+  
   return (
     <div id="wd-assignments">
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -45,6 +60,7 @@ export default function Assignments() {
             <FaPlus className="me-2" />
             Group
           </Button>
+          {isFaculty && (
           <Button
             variant="danger"
             className="me-2 text-nowrap"
@@ -53,6 +69,7 @@ export default function Assignments() {
             <FaPlus className="me-2" />
             Assignment
           </Button>
+          )}
         </div>
       </div>
 
@@ -69,10 +86,12 @@ export default function Assignments() {
             </span>
           </div>
           <ListGroup className="wd-lessons rounded-0">
-            {courseAssignments.map((assignment: any) => (
+            {assignments.map((assignment: any) => (
               <ListGroupItem key={assignment._id} className="wd-lesson p-3 ps-1">
                 <BsGripVertical className="me-2 fs-3" />
-                <FaRegEdit className="me-3 text-success" />
+                {isFaculty && (
+                  <FaRegEdit className="me-3 text-success" />
+                )}
                 <Link
                   href={`/courses/${cid}/assignments/${assignment._id}`}
                   className="fw-bold fs-5 text-decoration-none text-dark"
@@ -80,11 +99,13 @@ export default function Assignments() {
                   {assignment.title}
                 </Link>
                 <span className="float-end">
+                  {isFaculty && (
                   <FaTrash
                     className="text-danger me-3 fs-5"
                     onClick={() => handleDelete(assignment._id)}
                     style={{ cursor: "pointer" }}
                   />
+                  )}
                   <BsCheckCircleFill className="text-success me-3 fs-5" />
                   <IoEllipsisVertical className="fs-4" />
                 </span>
