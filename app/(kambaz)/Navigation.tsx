@@ -11,9 +11,9 @@ export default function KambazNavigation() {
     const links = [
         { label: "Dashboard", path: "/dashboard", icon: AiOutlineDashboard },
         { label: "Courses",   path: "/dashboard", icon: LiaBookSolid },
-        { label: "Calendar",  path: "/Calendar",  icon: IoCalendarOutline },
-        { label: "Inbox",     path: "/Inbox",     icon: FaInbox },
-        { label: "Labs",      path: "/labs",             icon: FaFlask },
+        { label: "Calendar",  path: "/Calendar", icon: IoCalendarOutline },
+        { label: "Inbox",     path: "/Inbox", icon: FaInbox },
+        { label: "Labs",      path: "/labs", icon: FaFlask },
     ];
     return (
         <ListGroup id="wd-kambaz-navigation" style={{width: 120}}
