@@ -14,18 +14,19 @@ export default function Profile() {
       const updatedProfile = await client.updateUser(profile);
       dispatch(setCurrentUser(updatedProfile));
     };
-  const fetchProfile = () => {
-    if (!currentUser) return redirect("/account/signin");
-    setProfile(currentUser);
-  };
   const signout = async () => {
     await client.signout();
     dispatch(setCurrentUser(null));
     redirect("/account/signin");
   };
   useEffect(() => {
-    fetchProfile();
-  }, []);
+    if (currentUser) {
+      setProfile(currentUser);
+    }
+  }, [currentUser]);
+  if (!currentUser) {
+    return <div>Loading...</div>;
+  }
   return (
    <div className="wd-profile-screen">
       <h3>Profile</h3>
