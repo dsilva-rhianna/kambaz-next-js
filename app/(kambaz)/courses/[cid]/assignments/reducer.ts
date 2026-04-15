@@ -2,9 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
 import * as db from "../../../database";
 
-const initialState = {
-  assignments: db.assignments,
-};
+const initialState = { assignments: [] as any[],};
 
 const assignmentsSlice = createSlice({
   name: "assignments",

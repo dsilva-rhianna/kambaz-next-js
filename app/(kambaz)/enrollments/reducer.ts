@@ -1,8 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-import * as db from "../database";
 
 const initialState = {
-  enrollments: db.enrollments,
+  enrollments: [] as any[],
 };
 
 const enrollmentsSlice = createSlice({

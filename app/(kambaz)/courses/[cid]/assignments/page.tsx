@@ -8,7 +8,7 @@ import { FaPlus, FaTrash } from "react-icons/fa6";
 import { IoEllipsisVertical } from "react-icons/io5";
 import { FaRegEdit } from "react-icons/fa";
 import { BsCheckCircleFill } from "react-icons/bs";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import { useState, useEffect } from "react";
 import * as client from "../assignments/client";
@@ -17,33 +17,49 @@ export default function Assignments() {
   const { cid } = useParams();
   const router = useRouter();
   const [assignments, setAssignments] = useState<any[]>([]);
+  const [search, setSearch] = useState("");
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
-  const isFaculty = (currentUser as any)?.role === "FACULTY" || (currentUser as any)?.role === "ADMIN";
+
+  const isFaculty =
+    (currentUser as any)?.role === "FACULTY" ||
+    (currentUser as any)?.role === "ADMIN";
 
   const fetchAssignments = async () => {
     try {
-      const data = await client.findAssignmentsForCourse(cid as string);
-      setAssignments(data);
+      const assignments = await client.findAssignmentsForCourse(cid as string);
+      setAssignments(assignments);
     } catch (error) {
       console.error("Failed to fetch assignments", error);
     }
   };
+
   useEffect(() => {
     fetchAssignments();
   }, [cid]);
 
   const handleDelete = async (assignmentId: string) => {
-    const confirm = window.confirm("Are you sure you want to remove this assignment?");
-    if (confirm) {
-      try {
-        await client.deleteAssignment(assignmentId);
-        setAssignments(assignments.filter((a) => a._id !== assignmentId));
-      } catch (error) {
-        console.error("Failed to delete assignment", error);
-      }
+    const confirmed = window.confirm(
+      "Are you sure you want to remove this assignment?"
+    );
+    if (!confirmed) return;
+
+    try {
+      await client.deleteAssignment(assignmentId);
+      setAssignments((prev) => prev.filter((a) => a._id !== assignmentId));
+    } catch (error) {
+      console.error("Failed to delete assignment", error);
     }
   };
-  
+
+  const filteredAssignments = assignments.filter((assignment: any) =>
+    assignment.title.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const formatDate = (date: string) => {
+    if (!date) return "";
+    return new Date(date).toLocaleString();
+  };
+
   return (
     <div id="wd-assignments">
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -53,22 +69,26 @@ export default function Assignments() {
             placeholder="Search for Assignment"
             className="ps-5"
             style={{ height: "40px" }}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
         </div>
+
         <div className="d-flex align-items-center">
           <Button variant="secondary" className="me-2 text-nowrap">
             <FaPlus className="me-2" />
             Group
           </Button>
+
           {isFaculty && (
-          <Button
-            variant="danger"
-            className="me-2 text-nowrap"
-            onClick={() => router.push(`/courses/${cid}/assignments/new`)}
-          >
-            <FaPlus className="me-2" />
-            Assignment
-          </Button>
+            <Button
+              variant="danger"
+              className="me-2 text-nowrap"
+              onClick={() => router.push(`/courses/${cid}/assignments/new`)}
+            >
+              <FaPlus className="me-2" />
+              Assignment
+            </Button>
           )}
         </div>
       </div>
@@ -85,34 +105,49 @@ export default function Assignments() {
               <IoEllipsisVertical className="fs-4" />
             </span>
           </div>
+
           <ListGroup className="wd-lessons rounded-0">
-            {assignments.map((assignment: any) => (
-              <ListGroupItem key={assignment._id} className="wd-lesson p-3 ps-1">
+            {filteredAssignments.map((assignment: any) => (
+              <ListGroupItem
+                key={assignment._id}
+                className="wd-lesson p-3 ps-1"
+              >
                 <BsGripVertical className="me-2 fs-3" />
+
                 {isFaculty && (
-                  <FaRegEdit className="me-3 text-success" />
+                  <Link
+                    href={`/courses/${cid}/assignments/${assignment._id}`}
+                    className="text-decoration-none"
+                  >
+                    <FaRegEdit className="me-3 text-success" />
+                  </Link>
                 )}
+
                 <Link
                   href={`/courses/${cid}/assignments/${assignment._id}`}
                   className="fw-bold fs-5 text-decoration-none text-dark"
                 >
                   {assignment.title}
                 </Link>
+
                 <span className="float-end">
                   {isFaculty && (
-                  <FaTrash
-                    className="text-danger me-3 fs-5"
-                    onClick={() => handleDelete(assignment._id)}
-                    style={{ cursor: "pointer" }}
-                  />
+                    <FaTrash
+                      className="text-danger me-3 fs-5"
+                      onClick={() => handleDelete(assignment._id)}
+                      style={{ cursor: "pointer" }}
+                    />
                   )}
                   <BsCheckCircleFill className="text-success me-3 fs-5" />
                   <IoEllipsisVertical className="fs-4" />
                 </span>
+
                 <div className="text-muted mt-1">
                   <span className="text-danger">Multiple Modules</span> |
-                  <strong> Not available until</strong> {assignment.available} |
-                  <strong> Due</strong> {assignment.due} | {assignment.points} pts
+                  <strong> Not available until</strong>{" "}
+                  {formatDate(assignment.available)} |
+                  <strong> Due</strong> {formatDate(assignment.due)} |{" "}
+                  {assignment.points} pts
                 </div>
               </ListGroupItem>
             ))}

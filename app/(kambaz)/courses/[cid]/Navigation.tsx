@@ -13,7 +13,7 @@ export default function CourseNavigation() {
                 const linkPath = link.toLowerCase();
                 let href;
                 if (link === "People") {
-                  href = `/courses/${cid}/people/table`;
+                  href = `/courses/${cid}/people`;
                 } else {
                   href = `/courses/${cid}/${linkPath === "home" ? "" : linkPath}`;
                 }

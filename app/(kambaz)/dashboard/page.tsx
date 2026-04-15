@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import * as client from "../courses/client";
-import * as enrollmentsClient from "../enrollments/client";
 import { setEnrollments, enrollCourse, unenrollCourse } from "../enrollments/reducer";
 import {
   Button,
@@ -52,8 +51,14 @@ export default function Dashboard() {
   };
   const fetchEnrollments = async () => {
     try {
-      const data = await enrollmentsClient.findEnrollmentsForUser();
-      dispatch(setEnrollments(data));
+      const data = await client.findMyCourses();
+      const enrollments = data
+        .filter((course: any) => course && course._id)
+        .map((course: any) => ({
+          user: (currentUser as any)?._id,
+          course: course._id,
+        }));
+    dispatch(setEnrollments(enrollments));
     } catch (error) {
       console.error("Failed to fetch enrollments", error);
     }
@@ -84,16 +89,16 @@ export default function Dashboard() {
   };
   const handleEnroll = async (courseId: string) => {
     try {
-      await enrollmentsClient.enrollInCourse(courseId);
-      dispatch(enrollCourse({ user: (currentUser as any)._id, course: courseId }));
+      await client.enrollIntoCourse((currentUser as any)._id, courseId);
+      await fetchEnrollments();
     } catch (error) {
       console.error("Failed to enroll", error);
     }
   };
   const handleUnenroll = async (courseId: string) => {
     try {
-      await enrollmentsClient.unenrollFromCourse(courseId);
-      dispatch(unenrollCourse({ user: (currentUser as any)._id, course: courseId }));
+      await client.unenrollFromCourse((currentUser as any)._id, courseId);
+      await fetchEnrollments();
     } catch (error) {
       console.error("Failed to unenroll", error);
     }
