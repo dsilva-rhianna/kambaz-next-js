@@ -6,12 +6,12 @@ import PeopleTable from "./table";
 import * as client from "../../client";
 
 export default function PeoplePage() {
-  const { cid } = useParams();
+  const { cid } = useParams<{ cid: string }>();
   const [users, setUsers] = useState<any[]>([]);
 
   const fetchUsers = async () => {
     if (!cid) return;
-    const enrolledUsers = await client.findUsersForCourse(cid as string);
+    const enrolledUsers = await client.findUsersForCourse(cid);
     setUsers(enrolledUsers);
   };
 

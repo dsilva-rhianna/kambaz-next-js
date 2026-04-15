@@ -18,7 +18,7 @@ import { RootState } from "../../../../store";
 import * as client from "../../assignments/client";
 
 export default function AssignmentEditor() {
-  const { cid, aid } = useParams();
+  const { cid, aid } = useParams<{ cid: string; aid: string }>();
   const router = useRouter();
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
 

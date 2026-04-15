@@ -10,7 +10,7 @@ import * as client from "../client";
 import { setEnrollments } from "../../enrollments/reducer";
 
 export default function CoursesLayout({ children }: { children: ReactNode }) {
-  const { cid } = useParams();
+  const { cid } = useParams<{ cid: string }>();
   const router = useRouter();
   const dispatch = useDispatch();
 

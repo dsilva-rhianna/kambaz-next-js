@@ -14,7 +14,7 @@ import { useState, useEffect } from "react";
 import * as client from "../assignments/client";
 
 export default function Assignments() {
-  const { cid } = useParams();
+  const { cid } = useParams<{ cid: string }>();
   const router = useRouter();
   const [assignments, setAssignments] = useState<any[]>([]);
   const [search, setSearch] = useState("");
@@ -26,7 +26,7 @@ export default function Assignments() {
 
   const fetchAssignments = async () => {
     try {
-      const assignments = await client.findAssignmentsForCourse(cid as string);
+      const assignments = await client.findAssignmentsForCourse(cid);
       setAssignments(assignments);
     } catch (error) {
       console.error("Failed to fetch assignments", error);

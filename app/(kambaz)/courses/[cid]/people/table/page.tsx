@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/app/(kambaz)/store";
 
 export default function PeopleTable() {
-	const { cid } = useParams();
+	const { cid } = useParams<{ cid: string }>();
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
 	const [users, setUsers] = useState<any[]>([]);
   const [showModal, setShowModal] = useState(false);
@@ -26,7 +26,7 @@ export default function PeopleTable() {
 
   const fetchUsers = async () => {
     try {
-      const data = await usersClient.findUsersInCourse(cid as string);
+      const data = await usersClient.findUsersInCourse(cid);
       setUsers(data);
     } catch (error) {
       console.error("Failed to fetch users", error);
@@ -39,7 +39,7 @@ export default function PeopleTable() {
   const handleAddUser = async () => {
     try {
       const newUser = await usersClient.createUser(data);
-      await enrollmentsClient.enrollUserInCourse(cid as string, newUser._id);
+      await enrollmentsClient.enrollUserInCourse(cid, newUser._id);
       fetchUsers();
       setShowModal(false);
       setData({ username: "", password: "", firstName: "", lastName: "", role: "STUDENT" });
