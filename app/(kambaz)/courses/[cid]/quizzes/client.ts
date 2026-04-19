@@ -72,3 +72,8 @@ export const deleteQuestion = async (questionId: string) => {
     `${process.env.NEXT_PUBLIC_HTTP_SERVER}/api/questions/${questionId}`
   );
 };
+
+export const createAttempt = async (quizId: string, attemptData: any) => {
+  const response = await axiosWithCredentials.post(`${QUIZZES_API}/${quizId}/attempts`, attemptData);
+  return response.data;
+};

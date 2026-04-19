@@ -1,5 +1,4 @@
 "use client";
-
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
@@ -20,6 +19,23 @@ export default function Quizzes() {
   const menuRef = useRef<HTMLDivElement>(null);
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
   const isFaculty = (currentUser as any)?.role === "FACULTY" || (currentUser as any)?.role === "ADMIN";
+  const [questionStats, setQuestionStats] = useState<{ [quizId: string]: { points: number; count: number } }>({});
+
+  const fetchQuestionStats = async (quizList: any[]) => {
+    const stats: { [quizId: string]: { points: number; count: number } } = {};
+    await Promise.all(
+      quizList.map(async (quiz: any) => {
+        try {
+          const questions = await client.findQuestionsForQuiz(quiz._id);
+          stats[quiz._id] = {
+            points: questions.reduce((sum: number, q: any) => sum + (q.points || 0), 0),
+            count: questions.length,
+          };
+        } catch {}
+      })
+    );
+    setQuestionStats(stats);
+  };
 
   const fetchLastAttempts = async (quizList: any[]) => {
     if (isFaculty || !currentUser) return;
@@ -38,11 +54,12 @@ export default function Quizzes() {
   const fetchQuizzes = async () => {
     try {
       const data = await client.findQuizzesForCourse(cid);
-      const sorted = data.sort((a: any, b: any) =>
+      const visible = isFaculty ? data : data.filter((q: any) => q.published);
+      const sorted = visible.sort((a: any, b: any) =>
         new Date(a.availableDate).getTime() - new Date(b.availableDate).getTime()
       );
       setQuizzes(sorted);
-      await fetchLastAttempts(sorted);
+      await Promise.all([fetchQuestionStats(sorted), fetchLastAttempts(sorted)]);
     } catch (err) {
       console.error("Failed to fetch quizzes", err);
     }
@@ -130,7 +147,7 @@ export default function Quizzes() {
           <ListGroup className="rounded-0">
             {quizzes.length === 0 ? (
               <ListGroupItem className="text-center text-muted p-4">
-                No quizzes yet.{isFaculty && " Click + Quiz to add one."}
+                {isFaculty ? "No quizzes yet. Click + Quiz to add one." : "No quizzes available."}
               </ListGroupItem>
             ) : (
               quizzes.map((quiz: any) => (
@@ -148,8 +165,8 @@ export default function Quizzes() {
                       {quiz.dueDate && (
                         <> | <strong>Due</strong> {new Date(quiz.dueDate).toLocaleDateString()}</>
                       )}
-                      {" | "}{quiz.points ?? 0} pts
-                      {" | "}{quiz.questionCount ?? 0} Questions
+                      {" | "}{questionStats[quiz._id]?.points ?? 0} pts
+                      {" | "}{questionStats[quiz._id]?.count ?? 0} Questions
                       {!isFaculty && lastAttempts[quiz._id] && (
                         <> | <strong>Score:</strong> {lastAttempts[quiz._id].score} pts</>
                       )}
@@ -206,9 +223,7 @@ export default function Quizzes() {
                         </div>
                       </>
                     ) : (
-                      quiz.published
-                        ? <BsCheckCircleFill className="text-success fs-5" />
-                        : <MdDoNotDisturb className="text-danger fs-5" />
+                      <BsCheckCircleFill className="text-success fs-5" />
                     )}
                   </div>
                 </ListGroupItem>

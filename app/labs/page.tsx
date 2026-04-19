@@ -2,7 +2,7 @@ import Link from "next/link";
 export default function labs() {
     return (
         <div id="wd-labs">
-            <h1>Rhianna DSilva (CS4550 - Online Section)</h1>
+            <h1>Rhianna DSilva and Rowen Latif (CS4550 - Online Section)</h1>
             <h1>Labs</h1>
             <ul>
                 <li>
@@ -27,7 +27,7 @@ export default function labs() {
                 </li>
                 <li>
                     <Link href="/" id="wd-kambaz-link">
-                    Kambaz </Link>
+                    Kambaz (Includes Quizzes Project)</Link>
                 </li>
                 <li>
                     <Link href="https://github.com/dsilva-rhianna/kambaz-next-js" id="wd-github-reach">

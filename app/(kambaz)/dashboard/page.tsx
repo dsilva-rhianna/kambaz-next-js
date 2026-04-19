@@ -144,7 +144,7 @@ export default function Dashboard() {
 
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h2 id="wd-dashboard-published">
-          {showAllCourses ? "All Courses" : "Enrolled Courses"} ({displayedCourses.length})
+          {showAllCourses ? "All Courses" : "Your Courses"} ({displayedCourses.length})
         </h2>
         <Button variant="primary" onClick={() => setShowAllCourses(!showAllCourses)}>
           {showAllCourses ? "Show Enrolled" : "Show All Courses"}
