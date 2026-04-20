@@ -38,7 +38,7 @@ export default function labs() {
                     Node GitHub </Link>
                 </li>
                 <li>
-                    <Link href="https://kambaz-node-server-app.onrender.com" id="wd-render">
+                    <Link href="https://kambaz-node-server-final-project.onrender.com" id="wd-render">
                     Render Link </Link>
                 </li>
             </ul>
