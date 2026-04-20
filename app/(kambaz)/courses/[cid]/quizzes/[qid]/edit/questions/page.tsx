@@ -36,7 +36,7 @@ export default function QuizQuestionsEditor() {
         { text: "", isCorrect: false },
       ],
       correctAnswer: true,
-      correctAnswers: [],
+      correctAnswers: [""],
     });
     await fetchQuestions();
     setEditingId(newQ._id);
@@ -64,12 +64,6 @@ export default function QuizQuestionsEditor() {
     await fetchQuestions();
     setEditingId(null);
     setEditForm(null);
-  };
-
-  const handleSaveAndPublish = async () => {
-    await client.updateQuestion(editForm._id, editForm);
-    await client.publishQuiz(qid);
-    router.push(`/courses/${cid}/quizzes`);
   };
 
   const renderEditor = () => {
@@ -229,10 +223,7 @@ export default function QuizQuestionsEditor() {
 
         <div className="d-flex gap-2 mt-3">
           <Button variant="secondary" onClick={handleCancel}>Cancel</Button>
-          <Button variant="primary" onClick={handleSaveQuestion}>
-            {questions.find(q => q._id === editForm._id) ? "Update Question" : "Save Question"}
-          </Button>
-          <Button variant="success" onClick={handleSaveAndPublish}>Save & Publish</Button>
+          <Button variant="primary" onClick={handleSaveQuestion}>Save Question</Button>
         </div>
       </div>
     );

@@ -33,7 +33,7 @@ export default function QuizDetails() {
       }
     };
     fetchData();
-  }, [qid]);
+  }, [currentUser, isFaculty, qid]);
 
   const handleTogglePublish = async () => {
     if (quiz.published) {
@@ -92,7 +92,7 @@ export default function QuizDetails() {
           <table className="table table-borderless w-50">
             <tbody>
               <tr><td><strong>Quiz Type</strong></td><td>{quiz.quizType}</td></tr>
-              <tr><td><strong>Points</strong></td><td>{quiz.points ?? 0}</td></tr>
+              <tr><td><strong>Points</strong></td><td>{questions.reduce((sum, q) => sum + (q.points || 0), 0)}</td></tr>
               <tr><td><strong>Number of Questions</strong></td><td>{questions.length}</td></tr>
               <tr><td><strong>Assignment Group</strong></td><td>{quiz.assignmentGroup}</td></tr>
               <tr><td><strong>Shuffle Answers</strong></td><td>{quiz.shuffleAnswers ? "Yes" : "No"}</td></tr>

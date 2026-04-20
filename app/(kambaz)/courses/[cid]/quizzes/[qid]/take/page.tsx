@@ -149,22 +149,34 @@ export default function QuizTake() {
       </div>
       {quiz.oneQuestionAtATime ? (
         <>
-          {questions[currentIndex] && renderQuestion(questions[currentIndex], currentIndex)}
-          <div className="d-flex justify-content-between mb-3 ms-5 ps-2">
-            {currentIndex > 0 ? (
-              <Button variant="light" className="border"
-                onClick={() => setCurrentIndex((i) => i - 1)} >
-                Previous
-              </Button>) : (
-              <span />
-            )}
-            {currentIndex < questions.length - 1 && (
-              <Button variant="light" className="border ms-auto"
-                onClick={() => setCurrentIndex((i) => i + 1)} >
-                Next
+        <div className="d-flex gap-1 flex-wrap mb-3">
+          {questions.map((q, i) => {
+            const isCurrent = i === currentIndex;
+            return (
+              <Button key={q._id} size="sm"
+                variant={isCurrent ? "danger" : "outline-secondary"}
+                onClick={() => setCurrentIndex(i)}>
+                {i + 1}
               </Button>
-            )}
-          </div>
+            );
+          })}
+        </div>
+        {questions[currentIndex] && renderQuestion(questions[currentIndex], currentIndex)}
+        <div className="d-flex justify-content-between mb-3 ms-5 ps-2">
+          {currentIndex > 0 ? (
+            <Button variant="light" className="border"
+              onClick={() => setCurrentIndex((i) => i - 1)} >
+              Previous
+            </Button>) : (
+            <span />
+          )}
+          {currentIndex < questions.length - 1 && (
+            <Button variant="light" className="border ms-auto"
+              onClick={() => setCurrentIndex((i) => i + 1)} >
+              Next
+            </Button>
+          )}
+        </div>
         </>
       ) : (
         questions.map((q, i) => renderQuestion(q, i))
